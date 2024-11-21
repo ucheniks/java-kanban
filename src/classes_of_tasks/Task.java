@@ -1,15 +1,14 @@
+package classes_of_tasks;
+
 public class Task {
     protected String name;
     protected String description;
-    protected static int idCount;
     protected int id;
     protected Status status;
 
     public Task(String name, String description) {
         this.name = name;
         this.description = description;
-        idCount++;
-        id = idCount;
         status = Status.NEW;
     }
 
@@ -20,7 +19,9 @@ public class Task {
     public String getName() {
         return name;
     }
-
+    public void setId(int id) {
+        this.id = id;
+    }
     public int getId() {
         return id;
     }
@@ -43,6 +44,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "'" + name + "'" + ", STATUS='" + status + "'";
+        return "'" + name + "'" + ", STATUS='" + status + "'"+" ID='"+id+"'";
     }
 }
