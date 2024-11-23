@@ -1,4 +1,4 @@
-package classes_of_tasks;
+package classes.tasks;
 
 public enum Status {
     NEW,

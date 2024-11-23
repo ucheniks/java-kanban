@@ -1,4 +1,4 @@
-package classes_of_tasks;
+package classes.tasks;
 
 public class Task {
     protected String name;
@@ -19,9 +19,11 @@ public class Task {
     public String getName() {
         return name;
     }
+
     public void setId(int id) {
         this.id = id;
     }
+
     public int getId() {
         return id;
     }
@@ -44,6 +46,6 @@ public class Task {
 
     @Override
     public String toString() {
-        return "'" + name + "'" + ", STATUS='" + status + "'"+" ID='"+id+"'";
+        return "'" + name + "'" + ", STATUS='" + status + "'" + " ID='" + id + "'";
     }
 }
