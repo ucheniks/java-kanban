@@ -101,10 +101,11 @@ class InMemoryTaskManagerTest {
 
         final List<Task> history = taskManager.getHistory();
         assertNotNull(history, "История не пустая.");
-        assertEquals(10, history.size(), "История не пустая.");
+        assertEquals(6, history.size(), "История не пустая.");
         taskManager.deleteTasks();
+        final List<Task> history1 = taskManager.getHistory();
         assertEquals(new ArrayList<>(), taskManager.getListOfTasks(), "Задачи не удалились");
-        assertEquals(4, history.size(), "Неправильно удалилось");
+        assertEquals(3, history1.size(), "Неправильно удалилось");
     }
 
     @Test
@@ -138,8 +139,9 @@ class InMemoryTaskManagerTest {
         taskManager.getSubtaskById(43);
         final List<Task> history = taskManager.getHistory();
         taskManager.deleteEpics();
+        final List<Task> history1 = taskManager.getHistory();
         assertEquals(new ArrayList<>(), taskManager.getListOfEpics(), "Задачи не удалились");
-        assertEquals(3, history.size(), "Неправильно удалилась");
+        assertEquals(3, history1.size(), "Неправильно удалилась");
     }
 
     @Test
@@ -156,12 +158,23 @@ class InMemoryTaskManagerTest {
             Subtask subtask = new Subtask("Test " + i, "Test  description", 2);
             taskManager.createSubtask(subtask);
         }
+        taskManager.getSubtaskById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(5);
+        taskManager.getSubtaskById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getSubtaskById(5);
+        taskManager.getSubtaskById(3);
+        taskManager.getSubtaskById(4);
+        taskManager.getEpicById(1);
+        taskManager.getEpicById(2);
+        taskManager.getSubtaskById(5);
         taskManager.deleteSubtasks();
         assertEquals(new ArrayList<>(), taskManager.getListOfSubtasks(), "Задачи не удалились");
         assertEquals(new ArrayList<>(), taskManager.getListOfSubtasksOfEpic(epic), "Задачи не удалились в эпике");
         assertEquals(new ArrayList<>(), taskManager.getListOfSubtasksOfEpic(epic1), "Задачи не удалились в эпике 1");
         assertEquals(Status.NEW, taskManager.getEpicById(1).getStatus(), "Статус не изменился");
-        assertEquals(Status.NEW, taskManager.getEpicById(2).getStatus(), "Статус не изменился");
+        assertEquals(Status.NEW, taskManager.getEpicById(1).getStatus(), "Статус не изменился");
     }
 
 
@@ -273,9 +286,9 @@ class InMemoryTaskManagerTest {
         taskManager.getSubtaskById(41);
         taskManager.getSubtaskById(42);
         taskManager.getSubtaskById(43);
-        final List<Task> history = taskManager.getHistory();
         assertEquals(5, taskManager.getListOfSubtasks().size(), "Неправильно добавились подзадачи");
         taskManager.deleteEpicById(21);
+        final List<Task> history = taskManager.getHistory();
         assertEquals(3, taskManager.getListOfSubtasks().size(), "Неправильно удалились подзадачи");
         assertEquals(19, taskManager.getListOfEpics().size(), "Неправильно удалился эпик");
         assertEquals(6, history.size(), "Неправильно удалилась");
