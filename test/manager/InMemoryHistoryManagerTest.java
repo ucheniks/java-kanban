@@ -1,6 +1,5 @@
 package manager;
 
-import classes.tasks.Epic;
 import classes.tasks.Task;
 import org.junit.jupiter.api.Test;
 
@@ -13,7 +12,6 @@ class InMemoryHistoryManagerTest {
     void add() {
         TaskManager taskManager = Managers.getDefault();
         Task task = new Task("Test ", "Test  description");
-        Task task1 = new Task("Test1 ", "Test  description");
         Task task2 = new Task("Test2 ", "Test  description");
         Task task3 = new Task("Test3 ", "Test  description");
         Task task4 = new Task("Test4 ", "Test  description");
