@@ -41,6 +41,7 @@ class FileBackedTaskManagerTest {
         assertEquals(0, loadedTaskManager.getListOfEpics().size(), "Список эпиков должен быть пустым");
         assertEquals(0, loadedTaskManager.getListOfSubtasks().size(), "Список подзадач должен быть пустым");
     }
+
     @Test
     void saveAndLoadTasks() throws IOException {
         Task task1 = new Task("Task", "Description Task ");
@@ -65,7 +66,7 @@ class FileBackedTaskManagerTest {
     }
 
     @Test
-    void loadFromFile_skipFakeLine() throws IOException{
+    void loadFromFile_skipFakeLine() throws IOException {
         Task task1 = new Task("Task", "Description Task");
         taskManager.createTask(task1);
         Files.write(tempFile, List.of("id,type,name,status,description,epic", "1,TASK,Task1,NEW,Description task1,", "fake line"));

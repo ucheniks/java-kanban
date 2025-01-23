@@ -126,7 +126,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             if (!firstLine.equals("id,type,name,status,description,epic")) {
                 throw new ManagerSaveException("Неверный формат файла: отсутствует заголовок");
             }
-            String line=reader.readLine();
+            String line = reader.readLine();
             while (line != null) {
                 Task task = taskManager.fromString(line);
                 if (task != null) {
@@ -149,19 +149,19 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         taskManager.tasksList.put(task.getId(), task);
                     }
                 }
-                line=reader.readLine();
+                line = reader.readLine();
             }
         } catch (IOException e) {
             throw new ManagerSaveException("Ошибка при чтении данных из файла: " + e.getMessage());
         }
 
-        taskManager.idCount = maxId+1;
+        taskManager.idCount = maxId + 1;
         return taskManager;
     }
 
     private Task fromString(String value) {
         String[] values = value.split(",");
-        if (values.length<5) {
+        if (values.length < 5) {
             return null;
         }
         try {
