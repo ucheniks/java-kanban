@@ -18,7 +18,8 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return "Подзадача '" + name + "'" + ", STATUS='" + status + "'" + "ID='" + id + " ':\n" +
-                "      Принадлежит эпику - '" + epicId + "';\n";
+        return id + ",SUBTASK" + "," + name + "," + status + "," + description + "," + epicId;
     }
+
 }
+
