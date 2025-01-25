@@ -36,6 +36,6 @@ public class Epic extends Task {
 
     @Override
     public String toString() {
-        return id + ",EPIC" + "," + name + "," + status + "," + description + ",";
+        return String.format("%d,EPIC,%s,%s,%s,", id, name, status, description);
     }
 }

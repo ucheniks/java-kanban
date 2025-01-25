@@ -14,7 +14,8 @@ import java.nio.file.Path;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
-    Path file;
+    private final Path file;
+    private final static String HEADER = "id,type,name,status,description,epic";
 
     public FileBackedTaskManager(Path file) {
         super();
@@ -95,7 +96,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private void save() {
         try (BufferedWriter writer = Files.newBufferedWriter(file)) {
-            writer.write("id,type,name,status,description,epic");
+            writer.write(HEADER);
             writer.newLine();
             for (Task task : tasksList.values()) {
                 writer.write(task.toString());
@@ -123,7 +124,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             if (firstLine == null) {
                 return taskManager;
             }
-            if (!firstLine.equals("id,type,name,status,description,epic")) {
+            if (!firstLine.equals(HEADER)) {
                 throw new ManagerSaveException("Неверный формат файла: отсутствует заголовок");
             }
             String line = reader.readLine();
@@ -162,6 +163,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
     private Task fromString(String value) {
         String[] values = value.split(",");
         if (values.length < 5) {
+            System.out.println("Ошибка при чтении строки из файла: неверный формат данных");
             return null;
         }
         try {
