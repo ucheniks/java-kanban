@@ -200,9 +200,9 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicById(int id) {
         ArrayList<Task> subtaskOfEpicToDelete = deleteEpicByIdFromHistory(id);
-        prioritizedTasks = prioritizedTasks.stream().
-                filter(task -> !subtaskOfEpicToDelete.contains(task)).
-                collect(Collectors.toCollection(() -> new TreeSet<Task>((task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime()))));
+        prioritizedTasks = prioritizedTasks.stream()
+                .filter(task -> !subtaskOfEpicToDelete.contains(task))
+                .collect(Collectors.toCollection(() -> new TreeSet<Task>((task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime()))));
         epicsList.remove(id);
     }
 
@@ -282,13 +282,13 @@ public class InMemoryTaskManager implements TaskManager {
 
     private boolean checkOnCrossing(Task task1, Task task2) {
         if (task1.getStartTime().isBefore(task2.getStartTime())) {
-            return task1.getStartTime().
-                    plus(task1.getDuration().minusMinutes(1)).
-                    isBefore(task2.getStartTime());
+            return task1.getStartTime()
+                    .plus(task1.getDuration().minusMinutes(1))
+                    .isBefore(task2.getStartTime());
         } else if (task2.getStartTime().isBefore(task1.getStartTime())) {
-            return task2.getStartTime().
-                    plus(task2.getDuration().minusMinutes(1)).
-                    isBefore(task1.getStartTime());
+            return task2.getStartTime()
+                    .plus(task2.getDuration().minusMinutes(1))
+                    .isBefore(task1.getStartTime());
         } else {
             return false;
         }

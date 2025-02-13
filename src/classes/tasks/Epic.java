@@ -46,20 +46,20 @@ public class Epic extends Task {
             setEmptyTime();
             return;
         }
-        Optional<LocalDateTime> optionalStartTime = subtasksList.values().stream().
-                map(Subtask::getStartTime).
-                filter(time -> time != null).
-                min(LocalDateTime::compareTo);
+        Optional<LocalDateTime> optionalStartTime = subtasksList.values().stream()
+                .map(Subtask::getStartTime)
+                .filter(time -> time != null)
+                .min(LocalDateTime::compareTo);
 
-        Optional<Subtask> endSubtask = subtasksList.values().stream().
-                filter(subtask -> (subtask.getStartTime() != null) && (subtask.getDuration() != null)).
-                max(Comparator.comparing(subtask -> subtask.getStartTime().plus(subtask.getDuration())));
+        Optional<Subtask> endSubtask = subtasksList.values().stream()
+                .filter(subtask -> (subtask.getStartTime() != null) && (subtask.getDuration() != null))
+                .max(Comparator.comparing(subtask -> subtask.getStartTime().plus(subtask.getDuration())));
 
 
-        long intDuration = subtasksList.values().stream().
-                filter(subtask -> subtask.getDuration() != null).
-                mapToLong(subtask -> subtask.getDuration().toMinutes()).
-                sum();
+        long intDuration = subtasksList.values().stream()
+                .filter(subtask -> subtask.getDuration() != null)
+                .mapToLong(subtask -> subtask.getDuration().toMinutes())
+                .sum();
 
         if ((optionalStartTime.isPresent()) && (endSubtask.isPresent())) {
             startTime = optionalStartTime.get();
