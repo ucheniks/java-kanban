@@ -1,6 +1,5 @@
 package classes.tasks;
 
-import manager.FileBackedTaskManager;
 
 public class Subtask extends Task {
     private int epicId;
