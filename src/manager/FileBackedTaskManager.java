@@ -11,11 +11,12 @@ import java.io.BufferedWriter;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.time.format.DateTimeParseException;
 
 
 public class FileBackedTaskManager extends InMemoryTaskManager {
     private final Path file;
-    private static final String HEADER = "id,type,name,status,description,epic";
+    private static final String HEADER = "id,type,name,status,description,epic,startTime,duration";
 
     public FileBackedTaskManager(Path file) {
         super();
@@ -143,6 +144,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
                         if (epic != null) {
                             epic.getSubtasksList().put(subtask.getId(), subtask);
                             epic.updateStatus();
+                            epic.updateTime();
                         } else {
                             System.out.println("Не найден эпик подзадачи, id подзадачи: " + subtask.getId());
                         }
@@ -162,7 +164,7 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
 
     private Task fromString(String value) {
         String[] values = value.split(",");
-        if (values.length < 5) {
+        if (values.length < 7) {
             System.out.println("Ошибка при чтении строки из файла: неверный формат данных");
             return null;
         }
@@ -172,22 +174,30 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             String name = values[2];
             Status status = Status.valueOf(values[3]);
             String description = values[4];
+            String startTime = values[6];
+            long duration = Long.parseLong(values[7]);
             switch (taskType) {
                 case TASK:
                     Task task = new Task(name, description);
                     task.setId(id);
                     task.setStatus(status);
+                    task.setStartTime(startTime);
+                    task.setDuration(duration);
                     return task;
                 case EPIC:
                     Epic epic = new Epic(name, description);
                     epic.setId(id);
                     epic.setStatus(status);
+                    epic.setStartTime(startTime);
+                    epic.setDuration(duration);
                     return epic;
                 case SUBTASK:
                     int epicId = Integer.parseInt(values[5]);
                     Subtask subtask = new Subtask(name, description, epicId);
                     subtask.setId(id);
                     subtask.setStatus(status);
+                    subtask.setStartTime(startTime);
+                    subtask.setDuration(duration);
                     return subtask;
                 default:
                     System.out.println("Неизвестный тип задачи");
@@ -198,6 +208,9 @@ public class FileBackedTaskManager extends InMemoryTaskManager {
             return null;
         } catch (IllegalArgumentException e) {
             System.out.println("Неверный аргумент: " + e.getMessage());
+            return null;
+        } catch (DateTimeParseException e) {
+            System.out.println("Неверный формат даты и время: " + e.getMessage());
             return null;
         }
     }

@@ -1,5 +1,7 @@
 package classes.tasks;
 
+import manager.FileBackedTaskManager;
+
 public class Subtask extends Task {
     private int epicId;
 
@@ -18,7 +20,14 @@ public class Subtask extends Task {
 
     @Override
     public String toString() {
-        return String.format("%d,SUBTASK,%s,%s,%s,%d", id, name, status, description, epicId);
+        return String.format("%d,SUBTASK,%s,%s,%s,%d,%s,%s",
+                id,
+                name,
+                status,
+                description,
+                epicId,
+                startTime != null ? startTime.format(DATE_TIME_FORMATTER) : "",
+                duration != null ? duration.toMinutes() : "");
     }
 
 }
