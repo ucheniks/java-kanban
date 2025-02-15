@@ -1,9 +1,13 @@
 package classes.tasks;
 
-import java.util.HashMap;
+
+import java.time.Duration;
+import java.time.LocalDateTime;
+import java.util.*;
 
 public class Epic extends Task {
     private HashMap<Integer, Subtask> subtasksList;
+    private LocalDateTime endTime;
 
     public Epic(String name, String description) {
         super(name, description);
@@ -34,8 +38,53 @@ public class Epic extends Task {
         }
     }
 
+    public void updateTime() {
+        if (subtasksList.isEmpty()) {
+            setEmptyTime();
+            return;
+        }
+        Optional<LocalDateTime> optionalStartTime = subtasksList.values().stream()
+                .map(Subtask::getStartTime)
+                .filter(time -> time != null)
+                .min(LocalDateTime::compareTo);
+
+        Optional<Subtask> endSubtask = subtasksList.values().stream()
+                .filter(subtask -> (subtask.getStartTime() != null) && (subtask.getDuration() != null))
+                .max(Comparator.comparing(subtask -> subtask.getStartTime().plus(subtask.getDuration())));
+
+
+        long intDuration = subtasksList.values().stream()
+                .filter(subtask -> subtask.getDuration() != null)
+                .mapToLong(subtask -> subtask.getDuration().toMinutes())
+                .sum();
+
+        if ((optionalStartTime.isPresent()) && (endSubtask.isPresent())) {
+            startTime = optionalStartTime.get();
+            endTime = endSubtask.map(subtask -> subtask.getStartTime().plus(subtask.getDuration())).orElse(null);
+            duration = Duration.ofMinutes(intDuration);
+        }
+
+    }
+
+    public void setEmptyTime() {
+        startTime = null;
+        endTime = null;
+        duration = null;
+    }
+
+    @Override
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
+
     @Override
     public String toString() {
-        return String.format("%d,EPIC,%s,%s,%s,", id, name, status, description);
+        return String.format("%d,EPIC,%s,%s,%s, ,%s,%s",
+                id,
+                name,
+                status,
+                description,
+                startTime != null ? startTime.format(DATE_TIME_FORMATTER) : "",
+                duration != null ? duration.toMinutes() : "");
     }
 }
