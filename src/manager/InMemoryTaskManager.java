@@ -15,7 +15,7 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Subtask> subtasksList;
     protected final HistoryManager historyManager;
     protected final TreeSet<Task> prioritizedTasks;
-    protected final Comparator<Task> COMPARATOR = (task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime());
+    protected static final Comparator<Task> TASK_COMPARATOR = (task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime());
     protected int idCount;
 
     public InMemoryTaskManager() {
@@ -23,7 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicsList = new HashMap<>();
         subtasksList = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
-        prioritizedTasks = new TreeSet<>(COMPARATOR);
+        prioritizedTasks = new TreeSet<>(TASK_COMPARATOR);
     }
 
     @Override
