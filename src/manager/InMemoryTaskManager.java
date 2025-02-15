@@ -14,7 +14,8 @@ public class InMemoryTaskManager implements TaskManager {
     protected final HashMap<Integer, Epic> epicsList;
     protected final HashMap<Integer, Subtask> subtasksList;
     protected final HistoryManager historyManager;
-    protected TreeSet<Task> prioritizedTasks;
+    protected final TreeSet<Task> prioritizedTasks;
+    protected final Comparator<Task> TASK_COMPARATOR = (task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime());
     protected int idCount;
 
     public InMemoryTaskManager() {
@@ -22,7 +23,7 @@ public class InMemoryTaskManager implements TaskManager {
         epicsList = new HashMap<>();
         subtasksList = new HashMap<>();
         historyManager = Managers.getDefaultHistory();
-        prioritizedTasks = new TreeSet<>((task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime()));
+        prioritizedTasks = new TreeSet<>(TASK_COMPARATOR);
     }
 
     @Override
@@ -67,9 +68,11 @@ public class InMemoryTaskManager implements TaskManager {
     public void deleteTasks() {
         deleteAllTasksFromHistory();
         tasksList.clear();
-        prioritizedTasks = prioritizedTasks.stream()
+        List<Task> filteredTasks = prioritizedTasks.stream()
                 .filter(task -> (task instanceof Subtask) || (task instanceof Epic))
-                .collect(Collectors.toCollection(() -> new TreeSet<>(prioritizedTasks.comparator())));
+                .toList();
+        prioritizedTasks.clear();
+        prioritizedTasks.addAll(filteredTasks);
     }
 
     @Override
@@ -77,9 +80,11 @@ public class InMemoryTaskManager implements TaskManager {
         deleteAllEpicsFromHistory();
         epicsList.clear();
         subtasksList.clear();
-        prioritizedTasks = prioritizedTasks.stream()
+        List<Task> filteredTasks = prioritizedTasks.stream()
                 .filter(task -> !(task instanceof Subtask))
-                .collect(Collectors.toCollection(() -> new TreeSet<>(prioritizedTasks.comparator())));
+                .toList();
+        prioritizedTasks.clear();
+        prioritizedTasks.addAll(filteredTasks);
     }
 
     @Override
@@ -91,9 +96,11 @@ public class InMemoryTaskManager implements TaskManager {
             epic.setStatus(Status.NEW);
             epic.setEmptyTime();
         }
-        prioritizedTasks = prioritizedTasks.stream()
+        List<Task> filteredTasks = prioritizedTasks.stream()
                 .filter(task -> !(task instanceof Subtask))
-                .collect(Collectors.toCollection(() -> new TreeSet<>(prioritizedTasks.comparator())));
+                .toList();
+        prioritizedTasks.clear();
+        prioritizedTasks.addAll(filteredTasks);
     }
 
     @Override
@@ -200,9 +207,11 @@ public class InMemoryTaskManager implements TaskManager {
     @Override
     public void deleteEpicById(int id) {
         ArrayList<Task> subtaskOfEpicToDelete = deleteEpicByIdFromHistory(id);
-        prioritizedTasks = prioritizedTasks.stream()
+        List<Task> filteredTasks = prioritizedTasks.stream()
                 .filter(task -> !subtaskOfEpicToDelete.contains(task))
-                .collect(Collectors.toCollection(() -> new TreeSet<Task>((task1, task2) -> task1.getStartTime().compareTo(task2.getStartTime()))));
+                .toList();
+        prioritizedTasks.clear();
+        prioritizedTasks.addAll(filteredTasks);
         epicsList.remove(id);
     }
 
