@@ -28,14 +28,20 @@ public class InMemoryHistoryManager implements HistoryManager {
 
     private List<Task> getTasks() {
         List<Task> listOfTasks = new ArrayList<>();
-        Node currentHead = head;
-        listOfTasks.add(head.data);
-        while (currentHead.data != null && currentHead.data != tail.data) {
-            currentHead = currentHead.next;
-            listOfTasks.add(currentHead.data);
+        if (head == null) {
+            return listOfTasks;
         }
+        Node currentHead = head;
+        while (currentHead != null) {
+            if (currentHead.data != null) {
+                listOfTasks.add(currentHead.data);
+            }
+            currentHead = currentHead.next;
+        }
+
         return listOfTasks;
     }
+
 
     private void removeNode(Node node) {
         if (node.data == head.data && node.data == tail.data) {
