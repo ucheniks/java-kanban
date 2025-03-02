@@ -6,6 +6,7 @@ import classes.tasks.Subtask;
 import classes.tasks.Task;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import manager.FileBackedTaskManager;
 import manager.InMemoryTaskManager;
 import manager.TaskManager;
 import org.junit.jupiter.api.AfterEach;
@@ -17,6 +18,7 @@ import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
+import java.nio.file.Path;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -347,6 +349,45 @@ public class HttpTaskServerTest {
         }.getType());
         assertNotNull(prioritizedTasks, "Приоритетные задачи не возвращаются");
         assertTrue(prioritizedTasks.isEmpty(), "Список приоритетных задач должен быть пустым");
+    }
+
+    @Test
+    public void testInternalServerErrorOnSave() throws IOException, InterruptedException {
+        tearDown();
+        Path invalidPath = Path.of("src/test/resources");
+        TaskManager fileManager = new FileBackedTaskManager(invalidPath);
+
+        HttpTaskServer server = new HttpTaskServer(fileManager);
+        server.start();
+
+        Task task = new Task("Test task", "Test description");
+        String taskJson = gson.toJson(task);
+
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString(taskJson))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+        assertEquals(500, response.statusCode(), "Неверный статус ответа при ошибке сохранения директории вместо файла");
+
+        server.stop();
+    }
+
+    @Test
+    public void testInvalidJson() throws IOException, InterruptedException {
+        HttpClient client = HttpClient.newHttpClient();
+        URI url = URI.create("http://localhost:8080/tasks");
+        HttpRequest request = HttpRequest.newBuilder()
+                .uri(url)
+                .POST(HttpRequest.BodyPublishers.ofString("{ invalid json }"))
+                .build();
+
+        HttpResponse<String> response = client.send(request, HttpResponse.BodyHandlers.ofString());
+
+        assertEquals(500, response.statusCode(), "Неверный статус ответа для некорректного JSON");
     }
 
     class ListOfTaskTypeToken extends TypeToken<List<Task>> {
